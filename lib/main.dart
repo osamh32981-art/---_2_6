@@ -1,0 +1,35 @@
+import 'package:flutter/material.dart';
+import 'dart:math';
+void main()=>runApp(MaterialApp(debugShowCheckedModeBanner:false, home:Login()));
+class Login extends StatefulWidget{const Login({super.key});@override State<Login> createState()=>_LoginState();}
+class _LoginState extends State<Login>{
+  final c=TextEditingController(text:"المصمم");
+  @override Widget build(BuildContext context){
+    return Directionality(textDirection:TextDirection.rtl, child:Scaffold(body:Container(decoration:BoxDecoration(gradient:LinearGradient(colors:[Color(0xFF0F172A),Color(0xFF0E7490)],begin:Alignment.topRight,end:Alignment.bottomLeft)), child:Center(child:Container(margin:EdgeInsets.all(24),padding:EdgeInsets.all(24),decoration:BoxDecoration(color:Colors.white,borderRadius:BorderRadius.circular(24)), child:Column(mainAxisSize:MainAxisSize.min,children:[
+      Icon(Icons.hub,size:70,color:Color(0xFF0E7490)),SizedBox(height:12),Text("LAN CONNECT PRO",style:TextStyle(fontWeight:FontWeight.w900,fontSize:20)),Text("بدون نت - صوت وصورة ورسائل",style:TextStyle(color:Colors.grey,fontSize:12)),
+      SizedBox(height:20),TextField(controller:c,decoration:InputDecoration(labelText:"اسمك - اكتب المصمم للشارة الذهبية",border:OutlineInputBorder(borderRadius:BorderRadius.circular(12)))),
+      SizedBox(height:16),SizedBox(width:double.infinity,height:50,child:ElevatedButton(style:ElevatedButton.styleFrom(backgroundColor:Color(0xFF0E7490)),onPressed:(){Navigator.pushReplacement(context,MaterialPageRoute(builder:(_)=>Chat(name:c.text.isEmpty?"مستخدم":c.text)));},child:Text("دخول الشبكة 🚀",style:TextStyle(color:Colors.white))))]))))));
+  }
+}
+class Msg{String t;String type;bool me;String sender;bool des;Msg(this.t,this.type,this.me,this.sender,this.des);}
+class Chat extends StatefulWidget{final String name;const Chat({super.key,required this.name});@override State<Chat> createState()=>_ChatState();}
+class _ChatState extends State<Chat>{
+  final ctrl=TextEditingController(); List<Msg> list=[]; Color col=Color(0xFF0E7490); String ring="بلبل الصباح 🌤️"; bool rec=false;
+  bool get isDes=>widget.name.contains("المصمم");
+  @override void initState(){super.initState(); list.add(Msg("أهلاً ${widget.name} ! التطبيق جاهز وعصري بدون نت. نفس الواي فاي = تواصل","text",false,"النظام",false));}
+  void send(String type,String txt){if(txt.trim().isEmpty)return; setState((){list.add(Msg(txt,type,true,widget.name,isDes));}); ctrl.clear(); Future.delayed(Duration(seconds:1),(){setState((){list.add(Msg("تم استلام عبر LAN: $txt","text",false,"أحمد",false));}); ScaffoldMessenger.of(context).showSnackBar(SnackBar(content:Text("🔔 $ring - رسالة جديدة"),backgroundColor:col));});}
+  @override Widget build(BuildContext context){
+    return Directionality(textDirection:TextDirection.rtl, child:Scaffold(backgroundColor:Color(0xFFF8FAFC), appBar:AppBar(backgroundColor:col,title:Row(children:[CircleAvatar(backgroundColor:Colors.white,child:Text(widget.name[0],style:TextStyle(color:col))),SizedBox(width:8),Column(crossAxisAlignment:CrossAxisAlignment.start,children:[Row(children:[Text(widget.name,style:TextStyle(color:Colors.white,fontSize:14,fontWeight:FontWeight.bold)),if(isDes)Container(margin:EdgeInsets.only(right:6),padding:EdgeInsets.symmetric(horizontal:6,vertical:2),decoration:BoxDecoration(color:Color(0xFFFFD700),borderRadius:BorderRadius.circular(6)),child:Text("⭐ المصمم المميز",style:TextStyle(fontSize:9,fontWeight:FontWeight.bold)))]),Text("LAN • بدون إنترنت • ${Random().nextInt(50)+1}.192.168",style:TextStyle(color:Colors.white70,fontSize:9))])]),actions:[IconButton(icon:Icon(Icons.color_lens,color:Colors.white),onPressed:(){showModalBottomSheet(context:context,builder:(_)=>Container(padding:EdgeInsets.all(20),child:Wrap(spacing:12,children:[Color(0xFF0E7490),Color(0xFF7C3AED),Color(0xFFDB2777),Color(0xFF059669)].map((c)=>GestureDetector(onTap:(){setState(()=>col=c); Navigator.pop(context);},child:Container(width:50,height:50,decoration:BoxDecoration(color:c,shape:BoxShape.circle)))).toList())));}),IconButton(icon:Icon(Icons.music_note,color:Colors.white),onPressed:(){showModalBottomSheet(context:context,builder:(_)=>Container(padding:EdgeInsets.all(12),child:Column(mainAxisSize:MainAxisSize.min,children:["بلبل الصباح 🌤️","موج البحر 🌊","تنبيه ذكي ✨","خشوع 🕌","نبض 💓"].map((r)=>ListTile(title:Text(r),onTap:(){setState(()=>ring=r); Navigator.pop(context);})).toList())));})]),
+      body:Column(children:[
+        Container(height:60,color:Colors.white,child:ListView(scrollDirection:Axis.horizontal,padding:EdgeInsets.all(8),children:[_chip("أنت",true),_chip("جوال أحمد - 192.168.1.5",false),_chip("لابتوب - 192.168.1.12",false)])),
+        Expanded(child:ListView.builder(reverse:true,padding:EdgeInsets.all(12),itemCount:list.length,itemBuilder:(_,i){var m=list[list.length-1-i]; return Align(alignment:m.me?Alignment.centerLeft:Alignment.centerRight, child:Container(margin:EdgeInsets.symmetric(vertical:4),padding:EdgeInsets.all(12),constraints:BoxConstraints(maxWidth:270),decoration:BoxDecoration(color:m.me?col:Colors.white,borderRadius:BorderRadius.circular(16),border:m.des?Border.all(color:Color(0xFFFFD700),width:2):null), child:Column(crossAxisAlignment:CrossAxisAlignment.start,children:[Row(children:[Text(m.sender,style:TextStyle(fontSize:10,fontWeight:FontWeight.bold,color:m.me?Colors.white:col)),if(m.des)Icon(Icons.verified,size:12,color:Color(0xFFFFD700))]),SizedBox(height:4),Text(m.t,style:TextStyle(color:m.me?Colors.white:Colors.black87)),]))); })),
+        Container(padding:EdgeInsets.all(10),decoration:BoxDecoration(color:Colors.white,borderRadius:BorderRadius.vertical(top:Radius.circular(18))),child:Row(children:[
+          GestureDetector(onLongPress:(){setState(()=>rec=true);},onLongPressEnd:(_){setState(()=>rec=false); send("voice","🎤 صوت");},child:Container(padding:EdgeInsets.all(10),decoration:BoxDecoration(color:rec?Colors.red:col,shape:BoxShape.circle),child:Icon(rec?Icons.stop:Icons.mic,color:Colors.white))),
+          SizedBox(width:8), Expanded(child:TextField(controller:ctrl,decoration:InputDecoration(hintText:"رسالة LAN...",filled:true,fillColor:Color(0xFFF1F5F9),border:OutlineInputBorder(borderRadius:BorderRadius.circular(22),borderSide:BorderSide.none)))), SizedBox(width:8),
+          FloatingActionButton.small(backgroundColor:col,onPressed:()=>send("text",ctrl.text),child:Icon(Icons.send,color:Colors.white)),
+          IconButton(icon:Icon(Icons.emoji_emotions,color:col),onPressed:()=>send("emoji","😍")),
+        ]))
+      ])));
+  }
+  Widget _chip(String t,bool me)=>Container(margin:EdgeInsets.symmetric(horizontal:4),padding:EdgeInsets.symmetric(horizontal:10,vertical:6),decoration:BoxDecoration(color:me?col.withOpacity(0.1):Color(0xFFF1F5F9),borderRadius:BorderRadius.circular(12),border:Border.all(color:me?col:Colors.transparent)),child:Text(t,style:TextStyle(fontSize:11,fontWeight:FontWeight.bold)));
+}
